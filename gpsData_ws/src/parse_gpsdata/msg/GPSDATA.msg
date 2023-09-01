@@ -1,0 +1,15 @@
+uint64 GPSweek
+float64 GPSTime
+float32 Heading
+float32 Pitch
+float32 Roll
+float64 Latitude
+float64 Longitude
+float32 Altitude
+float32 Ve
+float32 Vn
+float32 Vu
+float32 Baseline
+int32 Nsv1
+int32 Nsv2
+int32 Status
