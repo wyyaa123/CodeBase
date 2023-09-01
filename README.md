@@ -32,7 +32,7 @@
 
 过拟合是指训练误差和测试误差之间的差距太大。换句换说，就是模型复杂度高于实际问题，**模型在训练集上表现很好，但在测试集上却表现很差**。模型对训练集"死记硬背"（记住了不适用于测试集的训练集性质或特点），没有理解数据背后的规律，**泛化能力差**。
 
-<center class="half" >
+<div style="text-align:center;" >
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./images/1.png">
@@ -41,7 +41,8 @@
     display: inline-block;
     color: #999;
     padding: 2px;">模型容量与拟合程度之间关系</div>
-</center>
+</div>
+
 
 <center class="half" >
     <img style="border-radius: 0.3125em;
