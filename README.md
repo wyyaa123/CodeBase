@@ -137,7 +137,7 @@ E(X^*)=\frac{1}{\sigma}E(X-\mu)=\frac{1}{\sigma}(E(X)-\mu)=0 \label{1}
 $$
 
 $$
-D(X^*)=E(X^{*2})-E(X^*)^2=E(\frac{X-\mu}{\sigma})^2=\frac{1}{\sigma^2}E(X-\mu)^2=\frac{\sigma^2}{\sigma^2}=1 \label{2}
+D(X^*)=E((X^*)^2)-E(X^*)^2=E(\frac{X-\mu}{\sigma})^2=\frac{1}{\sigma^2}E(X-\mu)^2=\frac{\sigma^2}{\sigma^2}=1 \label{2}
 $$
 
 
