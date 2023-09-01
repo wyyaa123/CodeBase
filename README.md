@@ -43,7 +43,7 @@
     padding: 2px;">模型容量与拟合程度之间关系</div>
 </center>
 
-<div style="text-align:center;">
+<center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./images/2.png">
@@ -52,7 +52,7 @@
     display: inline-block;
     color: #999;
     padding: 2px;">欠拟合与过拟合</div>
-</div>
+</center>
 
 
 
@@ -141,9 +141,31 @@ $$
 D(X^*)=E(X^{*2})-E(X^*)^2=E(\frac{X-\mu}{\sigma})^2=\frac{1}{\sigma^2}E(X-\mu)^2=\frac{\sigma^2}{\sigma^2}=1 \label{2}
 $$
 
+#### 四、 深度学习中Epoch、Batch以及Batch size的设定
 
+**Epoch（时期）：**
 
+当一个完整的数据集通过了神经网络一次并且返回了一次，这个过程称为一次>epoch。（也就是说，所有训练样本在神经网络中都 进行了一次正向传播 和一次反向传播 ）
 
+再通俗一点，一个Epoch就是将所有训练样本训练一次的过程。
+
+然而，当一个Epoch的样本（也就是所有的训练样本）数量可能太过庞大（对于计算机而言），就需要把它分成多个小块，也就是就是分成多个Batch 来进行训练。
+
+-   **Batch（批 / 一批样本）：**
+
+将整个训练样本分成若干个Batch。
+
+-   **Batch_Size（批大小）：**
+
+每批样本的大小。
+
+-   **Iteration（一次迭代）：**
+
+训练一个Batch就是一次Iteration（这个概念跟程序语言中的迭代器相似）
+
+-   **为什么要使用多于一个epoch?**
+
+在神经网络中传递完整的数据集一次是不够的，而且我们需要将完整的数据集在同样的神经网络中传递多次。但请记住，我们使用的是有限的数据集，并且我们使用一个迭代过程即梯度下降来优化学习过程。如下图所示。因此仅仅更新一次或者说使用一个epoch是不够的。
 
 
 
