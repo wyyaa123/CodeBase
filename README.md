@@ -130,14 +130,14 @@ print (bgr_img.shape)
 
 #### 三、zero-mean normalization, z-score标准化
 
-设随机变量$X$具有数学期望$E(X)=\mu$, 方差$D(x)=\alpha^2\neq 0$. 记$X^*=\frac{X-\mu}{\sigma}$, 叫做随机变量$X$的标准初始化. 将随机变量的期望化为0, 方差化为1. 证明:
+设随机变量$X$具有数学期望$E(X)=\mu$, 方差$D(x)=\alpha^2 \neq 0$. 记$X^*=\frac{X-\mu}{\sigma}$, 叫做随机变量$X$的标准初始化. 将随机变量的期望化为0, 方差化为1. 证明:
 
 $$
 E(X^*)=\frac{1}{\sigma}E(X-\mu)=\frac{1}{\sigma}(E(X)-\mu)=0 \label{1}
 $$
 
 $$
-D(X^*)=E(X^{*2})-[E(X^*)]^2=E[(\frac{X-\mu}{\sigma})^2]=\frac{1}{\sigma^2}E[(X-\mu)^2]=\frac{\sigma^2}{\sigma^2}=1 \label{2}
+D(X^*)=E(X^{*2})-E(X^*)^2=E(\frac{X-\mu}{\sigma})^2=\frac{1}{\sigma^2}E(X-\mu)^2=\frac{\sigma^2}{\sigma^2}=1 \label{2}
 $$
 
 
