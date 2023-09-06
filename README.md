@@ -171,7 +171,7 @@ $$
 
 ### 2023年9月2日
 
-#### 一关于python中的shape属性（补充）
+#### 一、关于python中的shape属性（补充）
 
 ```python
 import numpy as np
@@ -181,5 +181,34 @@ a.shape # (3,)
 
 a = np.array([[1, 2, 3]])
 a.shape # (1, 3)
+```
+
+### 2023年9月4日
+
+#### 一、csv文件的数据读取并查看数据结构之间关系
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.concat([train_df['Sold Price'], train_df['Listed Price']], axis=1)
+fig = plt.scatter(data, x='Listed Price', y='Sold Price')
+fig.show()
+```
+
+#### 二、csv文件中查看某一类数据的值分布
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 假设 train_data 是一个包含 "SalePrice" 列的 DataFrame
+
+# 绘制 SalePrice 列的直方图
+sns.displot(train_data["SalePrice"], kde=True)  # 使用 kde=True 添加核密度估计曲线
+plt.title('Distribution of SalePrice')
+plt.xlabel('SalePrice')
+plt.ylabel('Frequency')
+plt.show()
 ```
 
