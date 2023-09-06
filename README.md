@@ -212,3 +212,39 @@ plt.ylabel('Frequency')
 plt.show()
 ```
 
+### 2023年9月6日
+
+#### 一、图像卷积后的输出形状
+
+##### 1.直接卷积
+
+<center class="half">
+    <img src="./assets/4.png" style="zoom:50%;"/>
+    <img src="./assets/no_padding_no_strides.gif" style="zoom:50%;"/>
+</center>
+
+-   输入$\pmb{X}: n_h \times n_w$
+-   卷积核 $\pmb{W}: k_h \times k_w$
+-   偏差$b \in \mathbb{R}$
+-   输出$\pmb{Y}:(n_h-k_h+1) \times(n_w-k_w+1)$
+
+##### 2.填充卷积
+
+<center class="half">
+    <img src="./assets/5.png" style="zoom:50%;"/>
+    <img src="./assets/same_padding_no_strides_transposed.gif" style="zoom:50%;"/>
+</center>
+
+-   高度(行)填充$p_h$, 宽度(列)填充$p_w$
+-   输出$\pmb{Y}:(n_h-k_h+p_h+1) \times(n_w-k_w+p_w+1)$
+
+##### 3.步幅
+
+<center class="half">
+    <img src="./assets/6.png" style="zoom:50%;"/>
+    <img src="./assets/no_padding_strides.gif" style="zoom:50%;"/>
+</center>
+
+-   高度(行)步幅$s_h$, 宽度(列)步幅$s_w$
+-   输出$\pmb{Y}:\frac{n_h-k_h+p_h+s_h}{s_h} \times\frac{n_w-k_w+p_w+s_w}{s_w}$
+
