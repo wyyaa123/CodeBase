@@ -35,7 +35,7 @@
 <center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./images/1.png">
+    src="./assets/1.png">
     <br>
     <div style="color:orange; border-bottom: 1px solid #d9d9d9;
     display: inline-block;
@@ -46,13 +46,14 @@
 <center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./images/2.png">
+    src="./assets/2.png">
     <br>
     <div style="color:orange; border-bottom: 1px solid #d9d9d9;
     display: inline-block;
     color: #999;
     padding: 2px;">欠拟合与过拟合</div>
 </center>
+
 
 
 
@@ -247,4 +248,51 @@ plt.show()
 
 -   高度(行)步幅$s_h$, 宽度(列)步幅$s_w$
 -   输出$\pmb{Y}:\frac{n_h-k_h+p_h+s_h}{s_h} \times\frac{n_w-k_w+p_w+s_w}{s_w}$
+
+### 2023年9月7日
+
+#### 一、经典的点扩散函数估计 (我用不起来)
+
+在曝光时间$T$内匀速直线运动位移量为$R$, 沿水平轴成$\theta$角变化, 则点扩散函数的频谱形式为:
+$$
+H(u, v) = \frac{T\sin[\pi(uR\cos{\theta} + vR\sin{\theta})]}{\pi(uR\cos{\theta}+vR\sin{\theta})}\exp{(-j\pi(uR\cos{\theta}+vR\sin{\theta}))}
+$$
+
+#### 二、torch的Tensor数据类型的形状
+
+```python
+>>>import torch
+>>>x = torch.rand((8, 8))
+>>>x
+tensor([[1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1., 1.]])
+>>>x.shape
+torch.Size([8, 8])
+>>>(1, 1) + x.shape
+(1, 1, 8, 8)
+>>>x = x.reshape((1, 1) + x.shape) #此处的意思为将x reshape 成输出通道数为1, 输入通道为1再加x.shape的shape. 
+# 此外, 该句等价于x = x.reshape((1, 1, x.shape[0], x.shape[1]))
+>>>x.shape
+torch.Size([1, 1, 8, 8])
+```
+
+#### 三、多个输入输出通道
+
+##### 1.多输入通道
+
+<img src="./assets/image-20230907221407932.png" alt="image-20230907221407932" style="zoom:50%;" />
+
+-   输入 $\pmb{X}: c_i \times n_h \times n_w$
+-   核 $\pmb{W}: c_i \times k_h \times k_w$
+-   输出 $\pmb{Y}: m_h \times m_w$
+
+
+
+##### 2.多输出通道
 
