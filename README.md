@@ -296,3 +296,179 @@ torch.Size([1, 1, 8, 8])
 
 ##### 2.多输出通道
 
+-   输入$\pmb{X}: c_i \times n_h \times n_w$
+-   核$\pmb{W}: c_0 \times c_i \times k_h \times k_w$
+-   输出$\pmb{Y}: c_0 \times m_h \times m_w$
+
+### 2023年9月11日
+
+#### 一、池化层
+
+-   池化层解决卷积对位置敏感的问题，所以经过单（多）个卷积层后都要进行池化层操作；
+-   经过池化层后输入通道等于输出通道；
+-   经过池化层后的图像大小和过卷积层后的结果一致：$\pmb{shape}:\frac{n_h-k_h+p_h+s_h}{s_h} \times\frac{n_w-k_w+p_w+s_w}{s_w}$
+-   实际上池化层中默认stride为池化层的核大小，在代码中可以指定stride.
+
+```python
+import torch 
+from torch import nn
+
+input = torch.tensor([[[[1, 3, 2, 1],
+                       	[2, 9, 1, 1],
+                       	[1, 3, 2, 3],
+                       	[5, 6, 1, 2]]]], dtype=torch.float32)
+
+net = nn.MaxPool2d(kernel_size=3, padding=1)
+
+net(input).shape
+
+#输出torch.Size([1, 1, 2, 2])
+```
+
+
+
+#### 二、卷积神经网络（LeNet）
+
+<img src="./assets/image-20230911214818663.png" alt="image-20230911214818663" style="zoom:50%;" />
+
+```python
+net = nn.Sequential(nn.Conv2d(1, 6, kernel_size=5, padding=2), nn.Sigmoid(),
+                    nn.AvgPool2d(kernel_size=2, stride=2),
+                    nn.Conv2d(6, 16, kernel_size=5), nn.Sigmoid(),
+                    nn.AvgPool2d(kernel_size=2, stride=2),
+                    nn.Flatten(),
+                    nn.Linear(16 * 5 * 5, 120), nn.Sigmoid(),
+                    nn.Linear(120, 84), nn.Sigmoid(),
+                    nn.Linear(84, 10))
+                    
+X = torch.rand(size=(1, 1, 28, 28), dtype=torch.float32)
+for layer in net:
+    X = layer(X)
+    print(layer.__class__.__name__,'output shape: \t',X.shape)
+
+# 输出为：
+# Conv2d output shape: 	 	 torch.Size([1, 6, 28, 28])
+# Sigmoid output shape: 	 torch.Size([1, 6, 28, 28])
+# AvgPool2d output shape: 	 torch.Size([1, 6, 14, 14])
+# Conv2d output shape: 	 	 torch.Size([1, 16, 10, 10])
+# Sigmoid output shape: 	 torch.Size([1, 16, 10, 10])
+# AvgPool2d output shape: 	 torch.Size([1, 16, 5, 5])
+# Flatten output shape: 	 torch.Size([1, 400])
+# Linear output shape: 	 	 torch.Size([1, 120])
+# Sigmoid output shape: 	 torch.Size([1, 120])
+# Linear output shape: 	 	 torch.Size([1, 84])
+# Sigmoid output shape: 	 torch.Size([1, 84])
+# Linear output shape: 	 	 torch.Size([1, 10])
+
+```
+
+#### 三、AlexNet（记得看论文）
+
+<img src="./assets/image-20230911215217788.png" alt="image-20230911215217788" style="zoom:50%;" />
+
+```python
+net = nn.Sequential(
+    nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=1), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    nn.Conv2d(96, 256, kernel_size=5, padding=2), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    nn.Conv2d(256, 384, kernel_size=3, padding=1), nn.ReLU(),
+    nn.Conv2d(384, 384, kernel_size=3, padding=1), nn.ReLU(),
+    nn.Conv2d(384, 256, kernel_size=3, padding=1), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    nn.Flatten(),
+    nn.Linear(6400, 4096), nn.ReLU(),
+    nn.Dropout(p=0.5), # 全连接层防止过拟合
+    nn.Linear(4096, 4096), nn.ReLU(),
+    nn.Dropout(p=0.5),
+    nn.Linear(4096, 10))
+
+X = torch.randn(1, 1, 224, 224)
+for layer in net:
+    X=layer(X)
+    print(layer.__class__.__name__,'output shape:\t',X.shape)
+    
+# 输出为：    
+# Conv2d output shape:	 torch.Size([1, 96, 54, 54])
+# ReLU output shape:	 torch.Size([1, 96, 54, 54])
+# MaxPool2d output shape:	 torch.Size([1, 96, 26, 26])
+# Conv2d output shape:	 torch.Size([1, 256, 26, 26])
+# ReLU output shape:	 torch.Size([1, 256, 26, 26])
+# MaxPool2d output shape:	 torch.Size([1, 256, 12, 12])
+# Conv2d output shape:	 torch.Size([1, 384, 12, 12])
+# ReLU output shape:	 torch.Size([1, 384, 12, 12])
+# Conv2d output shape:	 torch.Size([1, 384, 12, 12])
+# ReLU output shape:	 torch.Size([1, 384, 12, 12])
+# Conv2d output shape:	 torch.Size([1, 256, 12, 12])
+# ReLU output shape:	 torch.Size([1, 256, 12, 12])
+# MaxPool2d output shape:	 torch.Size([1, 256, 5, 5])
+# Flatten output shape:	 torch.Size([1, 6400])
+# Linear output shape:	 torch.Size([1, 4096])
+# ReLU output shape:	 torch.Size([1, 4096])
+# Dropout output shape:	 torch.Size([1, 4096])
+# Linear output shape:	 torch.Size([1, 4096])
+# ReLU output shape:	 torch.Size([1, 4096])
+# Dropout output shape:	 torch.Size([1, 4096])
+# Linear output shape:	 torch.Size([1, 10])  
+```
+
+#### 三、VGG
+
+在VGG中，使用了3个3x3卷积核来代替7x7卷积核，使用了2个3x3卷积核来代替5*5卷积核，这样做的主要目的是在保证具有相同感知野的条件下，提升了网络的深度，在一定程度上提升了神经网络的效果。VGG中固定有三个全连接层，因此VGG—(3+x)，其中x为VGG块重复的个数。
+
+VGG块由多个卷积层和一个最大池化层组成，见下图
+
+<center class="half">
+    <img src="./assets/image-20230911220752152.png" style="zoom:50%;"/>
+</center>
+
+```python
+def vgg_block(num_convs, in_channels, out_channels):
+    layers = []
+    for _ in range(num_convs):
+        layers.append(nn.Conv2d(in_channels, out_channels,
+                                kernel_size=3, padding=1))
+        layers.append(nn.ReLU())
+        in_channels = out_channels
+    layers.append(nn.MaxPool2d(kernel_size=2,stride=2))
+    return nn.Sequential(*layers)
+
+conv_arch = ((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))
+
+def vgg(conv_arch):
+    conv_blks = []
+    in_channels = 1
+    for (num_convs, out_channels) in conv_arch: #VGG-4
+        conv_blks.append(vgg_block(num_convs, in_channels, out_channels))
+        in_channels = out_channels
+
+    return nn.Sequential(
+        *conv_blks, nn.Flatten(),
+        nn.Linear(out_channels * 7 * 7, 4096), nn.ReLU(), nn.Dropout(0.5),
+        nn.Linear(4096, 4096), nn.ReLU(), nn.Dropout(0.5),
+        nn.Linear(4096, 10))
+
+net = vgg(conv_arch)
+
+X = torch.randn(size=(1, 1, 224, 224))
+for blk in net:
+    X = blk(X)
+    print(blk.__class__.__name__,'output shape:\t',X.shape)
+    
+    
+# 输出为:
+# Sequential output shape:	 torch.Size([1, 64, 112, 112])
+# Sequential output shape:	 torch.Size([1, 128, 56, 56])
+# Sequential output shape:	 torch.Size([1, 256, 28, 28])
+# Sequential output shape:	 torch.Size([1, 512, 14, 14])
+# Sequential output shape:	 torch.Size([1, 512, 7, 7])
+# Flatten output shape:	 torch.Size([1, 25088])
+# Linear output shape:	 torch.Size([1, 4096])
+# ReLU output shape:	 torch.Size([1, 4096])
+# Dropout output shape:	 torch.Size([1, 4096])
+# Linear output shape:	 torch.Size([1, 4096])
+# ReLU output shape:	 torch.Size([1, 4096])
+# Dropout output shape:	 torch.Size([1, 4096])
+# Linear output shape:	 torch.Size([1, 10])
+```
+
