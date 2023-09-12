@@ -1,3 +1,11 @@
+
+
+<center class="half">
+    <img src="./assets/赛马娘.gif" style="zoom:50%;"/>
+</center>
+
+
+
 ## 2023年8月16日
 
 #### 一、训练集
