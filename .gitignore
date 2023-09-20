@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+*.zip
+
+classify_leaves/data/images

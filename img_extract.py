@@ -39,8 +39,8 @@ class ImageCreator():
                     # if True:
                     #     image_blue = cv_image[:, :, 0]
                     #     image_green = cv_image[:, :, 1]
-                    #    image_red = cv_image[:, :, 2]
-                    #    cv_image = np.dstack((image_blue, image_red, image_green)) #bgr->gbr
+                    #    image_red = cv_image[:, :, 2] 
+                    #    cv_image = np.dstack((image_blue, image_red, image_green)) #bgr->gbr # opencv: BGR plt: RGB
                     
                     if cv.imwrite(path + image_name, cv_image): bar.set_description_str("ok")  #保存；: print('OK!')
                     else: bar.set_description_str("failed!")
