@@ -34,3 +34,5 @@
 *.zip
 
 classify_leaves/data/images
+
+*.pptx
