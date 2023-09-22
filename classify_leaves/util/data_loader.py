@@ -86,7 +86,7 @@ def read_csv(path, isTest = False):
 #     self.std = np.array(self.std) / num_imgs#要使数据集归一化，均值和方差需除以总图片数量
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
         
     # data = BaseDataset("/home/nrc/classify_leaves/data/train.csv")
     # print (data.means)
@@ -113,5 +113,13 @@ def read_csv(path, isTest = False):
     # raw_img = aug(image=raw_img, image_2=raw_img)
 
     # print (raw_img["image"].shape)
-    pass
+    input = cv.imread("../../../GOPRO_Large/train/GOPR0372_07_00/blur/000047.png", cv.IMREAD_COLOR)
+
+    import torchvision
+
+    aug = torchvision.transforms.Compose([ToTensor()])
+
+    out = aug(input).unsqueeze(0) # torch.Size([3, 720, 1280]) ----> torch.Size([1, 3, 720, 1280])
+
+    print (out.shape)
 
