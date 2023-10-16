@@ -254,7 +254,7 @@ plt.show()
 </center>
 
 -   高度(行)步幅$s_h$, 宽度(列)步幅$s_w$
--   输出$\pmb{Y}:\frac{n_h-k_h+p_h+s_h}{s_h} \times\frac{n_w-k_w+p_w+s_w}{s_w}$
+-   输出$\pmb{Y}:\frac{n_h-k_h+p_h+s_h}{s_h} \times\frac{n_w-k_w+p_w+s_w}{s_w}$（向下取整）
 
 #### 4.感受野(Receptive Field, RF)大小
 
@@ -529,7 +529,7 @@ $$
 
 ### 一、转置卷积
 
-反卷积输出特征尺度公式：$W^{\prime} = (W-1)*S + F - 2P$
+反卷积输出特征尺度公式：$W^{\prime} = (W-1)*S + K - 2P$
 
 ## 2023年9月15日
 
@@ -542,3 +542,18 @@ $$
 ### 一、PyTorch模型保存
 
 模型的本质是一堆用某种结构存储起来的参数，所以在保存的时候有两种方式，一种方式是直接将整个模型保存下来，之后直接加载整个模型，但这样会比较耗内存；另一种是只保存模型的参数，之后用到的时候再创建一个同样结构的新模型，然后把所保存的参数导入新模型。
+
+## 2023年10月16日
+
+### 一、光流
+
+<img src="./assets/image-20231016114825338.png" alt="image-20231016114825338" style="zoom:50%;" />
+
+光流（optical flow）是空间运动物体在观察成像平面上的**像素运动的瞬时速度**, 在时间间隔很小（比如视频的连续前后两帧之间）时，也等同于目标点的位移。
+
+前提假设：**1.亮度恒定(灰度一致性假设)    2.运动幅度小**, 从而有:
+$$
+I(x,y,t) = I(x+dx, y+dy, t+dt) \\ 
+\rightarrow  I(x,y,t) = I(x, y, z) + \frac{\partial{I}}{\partial{x}}*dx + \frac{\partial{I}}{\partial{y}}*dy + \frac{\partial{I}}{\partial{t}}*dt \\
+\rightarrow \frac{\partial{I}}{\partial{x}}*dx + \frac{\partial{I}}{\partial{y}}*dy + \frac{\partial{I}}{\partial{t}}*dt = 0
+$$
