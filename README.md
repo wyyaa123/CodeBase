@@ -557,3 +557,78 @@ I(x,y,t) = I(x+dx, y+dy, t+dt) \\
 \rightarrow  I(x,y,t) = I(x, y, z) + \frac{\partial{I}}{\partial{x}}*dx + \frac{\partial{I}}{\partial{y}}*dy + \frac{\partial{I}}{\partial{t}}*dt \\
 \rightarrow \frac{\partial{I}}{\partial{x}}*dx + \frac{\partial{I}}{\partial{y}}*dy + \frac{\partial{I}}{\partial{t}}*dt = 0
 $$
+
+### 二、python变量前加星号的意义
+
+```python
+def add(x, y):
+	return x + y
+```
+
+-   列表或元组前面加星号作用是将列表解开成两个独立的参数，传入函数
+
+    ```
+    a = [1, 2]
+    
+    b = (1, 2)
+    
+    add(*a)
+    >>>3
+    
+    add(*b)
+    >>>3
+    ```
+
+-   字典前面加两个星号，是将字典的值解开成独立的元素作为形参。注意字典的键要和形参名一致
+
+    ```python
+    c = {'x': 1, 'y': 2}
+    
+    add(**c)
+    ```
+
+## 2023年10月17日
+
+### 一、论文中10x代表什么意思
+
+答： 10x 十倍于某某某， 10x less 是某某某的十分之一
+
+### 二、Layer Normalization与Batch Normlization
+
+![7](./assets/7.png)
+
+BN如右侧所示，它是取不同样本的同一个通道的特征做归一化；LN则是如左侧所示，它取的是同一个样本的不同通道做归一化。
+
+BN是按照样本数计算归一化统计量的，当样本数很少时，比如说只有4个。这四个样本的均值和方差便不能反映全局的统计分布息，所以基于少量样本的BN的效果会变得很差。在一些场景中，比如说硬件资源受限，在线学习等场景，BN是非常不适用的。
+
+### 三、torch实现Hadamard积与普通矩阵乘积
+
+-   Hadamard积
+
+``````python
+a = torch.Tensor([[1,2], [3,4]])
+b = torch.Tensor([[5,6], [7,8]])
+hadamard_product = a * b
+print('hadamard_product:', hadamard_product)
+
+>>>tensor([[ 5., 12.],
+        [21., 32.]])
+``````
+
+-   矩阵乘积
+
+``````python
+a = torch.Tensor([[1,2], [3,4]])
+b = torch.Tensor([[5,6], [7,8]])
+matrix_product = torch.matmul(a, b)
+
+>>>tensor([[19., 22.],
+        [43., 50.]])
+``````
+
+## 2023年10月18日
+
+### 一、patch_size和batch_size
+
+-   **Batch**是**批量的大小**，就是你训练的时候每次输入多少张图片，每个**epoch**有多个**Batch**
+-   **Patch**是**图像块的大小**，比如说原图$1024 * 1024$，随机从图中裁剪出$256 * 256$大小的块，就是patch。更准确来说：“patch”, 指一个二维图片中的其中一个小块, 即一张二维图像中有很多个patch。 正如在神经网络的卷积计算中, 图像并不是一整块图像直接同卷积核进行运算, 而是被分成了很多很多个patch分别同卷积核进行卷积运算, 这些patch的大小取决于卷积核的size. 卷积核每次只查看一个patch, 然后移动到另一个patch, 直到图像分成的所有patch都参与完运算.
