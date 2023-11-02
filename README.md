@@ -603,7 +603,7 @@ BN是按照样本数计算归一化统计量的，当样本数很少时，比如
 
 ### 三、torch实现Hadamard积与普通矩阵乘积
 
--   Hadamard积
+-   Hadamard积 (**element-wise product = element-wise multiplication = Hadamard product**)
 
 ``````python
 a = torch.Tensor([[1,2], [3,4]])
@@ -632,3 +632,29 @@ matrix_product = torch.matmul(a, b)
 
 -   **Batch**是**批量的大小**，就是你训练的时候每次输入多少张图片，每个**epoch**有多个**Batch**
 -   **Patch**是**图像块的大小**，比如说原图$1024 * 1024$，随机从图中裁剪出$256 * 256$大小的块，就是patch。更准确来说：“patch”, 指一个二维图片中的其中一个小块, 即一张二维图像中有很多个patch。 正如在神经网络的卷积计算中, 图像并不是一整块图像直接同卷积核进行运算, 而是被分成了很多很多个patch分别同卷积核进行卷积运算, 这些patch的大小取决于卷积核的size. 卷积核每次只查看一个patch, 然后移动到另一个patch, 直到图像分成的所有patch都参与完运算.
+
+## 2023年10月30日
+
+### 一、FLOPS和FLOPs和MACs
+
+-   ### FLOPS
+
+FLOPS（Floating Point Operations per Second）指**每秒浮点运算次数**，可以理解为评估**计算速度**的单位。主要作为用来描述硬件性能的指标，比如评估某型号GPU的计算算力，即能够产生多少算力速度给模型。同时也可以作为描述深度学习模型在GPU上实际运行时速度的单位，即模型在GPU提供多少算力速度下进行训练、推理的任务。
+
+-   ### FLOPs
+
+FLOPs（Floating Point Operations）指**浮点运算次数**，可以理解为描述总计算量的单位。从拼写上容易与FLOPS弄混、注意最后字母是小写s。FLOPs可以用来衡量一个模型/算法的总体复杂度（即所需要计算量），在论文中比较流行的单位是**GFLOPs**：1 GFLOPs=10^9 FLOPs。 比如我们要估算一个卷积神经网络总复杂度时使用的单位就是FLOPs，具体推导方法可见本文章节【深度学习模型、LLM的FLOPs推导】。
+
+另外在工业界模型实际部署中，常常使用**QPS** (queries per second，即每秒处理的个数）作为指标来评估模型每秒能够处理的速度，即QPS可以用来描述一个模型或者服务在GPU尽可能打满的情况下每秒能处理查询的个数，通常作为线上服务或者机器的性能指标。
+
+-   ### MACs
+
+MACs (Multiply ACcumulate operations)指 **乘加累积操作次数**，有时也用**MAdds**（Multiply-Add operations）表示，是微处理器中的特殊运算。MACs也可以为是描述总计算量的单位，但常常被人们与FLOPs概念混淆(Python第三方包Torchstat、Thop等），实际上一个MACs包含一个乘法操作与一个加法操作，因此1个MACs约等价于2个FLOPs，即 **1 MACs = 2 FLOPs** ，1GMACs = 10^9 MACs。
+
+FLOPs的作用是？ 当我们训练一个模型时（比如LLM)，通常通过计算它的FLOPs与使用的GPU的FLOPS，大致估算训练时间。那么如何得到一个模型的FLOPs呢？通常可以通过其网络结构估算或者使用第三方包去获取，这里先介绍如何手动估算一个模型FLOPs。
+
+### 二、什么是BottleNeck结构？
+
+<img src="./assets/image-20231030160809797.png" alt="image-20231030160809797" style="zoom:50%;" />
+
+类似于这种输入输出的通道数多，中间的通道数少的结构为BottleNecks结构，常见于轻量化网络的基本单元块设计。
