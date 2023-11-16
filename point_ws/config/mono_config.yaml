@@ -1,0 +1,31 @@
+%YAML:1.0
+# sub_img_topic: "/prometheus/camera/rgb/image_raw"
+sub_point_topic: "/point"
+sub_pose_topic: "/TODO"
+# pub_img_topic: "/undistort_image"
+pub_world_point_topic: "/world_point"
+# image1_topic: "/cam1/image_raw"
+output_path: "/home/nrc/vins_ws/data/"
+
+# cam0_calib: "cam0_mei.yaml"
+# cam1_calib: "cam1_mei.yaml"
+pub_undistort: True
+fisheye_model: True
+image_width: 1920
+image_height: 1080
+
+camera_matrix: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [1548.0695407611965, 0, 901.3434624293026,
+            0, 1567.6123535829865, 533.3529647236783,
+            0, 0, 1]
+
+distortion_coefficients: !!opencv-matrix
+    rows: 1
+    cols: 4
+    dt: d
+    data: [-0.4008372110357315, 0.10614433362022645, 0.004560021450417803, 0.01722812740417589]
+
+

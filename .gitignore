@@ -36,3 +36,13 @@
 classify_leaves/data/images
 
 *.pptx
+
+*.bag
+
+*.cmake
+
+build/
+
+devel/
+
+.vscode/
