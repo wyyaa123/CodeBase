@@ -19,11 +19,12 @@ using namespace std; // for debug
 class Camera {
 public:
     Camera() {}
+    Camera(const std::string& config_file) { readParameters(config_file); }
     cv::Point2d& undistorted();
     void getPose(const geometry_msgs::PoseStampedConstPtr& poseptr);
-    void getPoint(const geometry_msgs::PointConstPtr& imgptr);
+    void getPoint(const geometry_msgs::PointStampedConstPtr& imgptr);
     Eigen::Vector3d pixel2world(const cv::Point2d& pixelCoor, bool flag = 0);
-    void readParameters();
+    void readParameters(const std::string& config_file);
     void init(ros::NodeHandle& nh);
     bool run = false;
 private:
@@ -40,15 +41,15 @@ private:
     ros::Publisher world_pt_pub, drop_pub;
 };
 
-void Camera::getPoint(const geometry_msgs::PointConstPtr& pointptr) {
-    // ROS_INFO("Point recevied!");
+void Camera::getPoint(const geometry_msgs::PointStampedConstPtr& pointStampptr) {
+    ROS_INFO("PointStamped recevied!");
     this->run = true;
-    this->pt.x = pointptr->x;
-    this->pt.y = pointptr->y;
+    this->pt.x = pointStampptr->point.x;
+    this->pt.y = pointStampptr->point.y;
 }
 
 void Camera::getPose(const geometry_msgs::PoseStampedConstPtr& poseptr) {
-    // ROS_INFO("PoseStamped recevied!");
+    ROS_INFO("PoseStamped recevied!");
     this->high_3d = poseptr->pose.position.z;
     this->camera_pose.w() = poseptr->pose.orientation.w;
     this->camera_pose.x() = poseptr->pose.orientation.x;
@@ -100,24 +101,32 @@ Eigen::Vector3d Camera::pixel2world(const cv::Point2d& pixelCoor, bool flag) {
     return world_pt;
 }
 
-void Camera::readParameters() {
-    this->camera_intrinsic_matrix = (cv::Mat_<double>(3, 3) << 1548.0695407611965, 0, 901.3434624293026,
-                                                                0, 1567.6123535829865, 533.3529647236783,
-                                                                0, 0, 1);
+void Camera::readParameters(const std::string& config_file) {
 
-    this->distort_coeff_matrix = (cv::Mat_<double>(1, 4) << -0.4008372110357315, 0.10614433362022645, 
-                                                            0.004560021450417803, 0.01722812740417589);
-    image_width = 1920;
-    image_height = 1080;
+    FILE *fh = fopen(config_file.c_str(),"r");
+    if(fh == NULL) {
+        ROS_WARN("config_file dosen't exist; wrong config_file path");
+        ROS_BREAK();
+        return;          
+    }
+    fclose(fh);
 
-    this->fisheyeFlag = 1;
+    cv::FileStorage fsread(config_file, cv::FileStorage::READ);
 
-    this->sub_point_topic = "/point";
-    this->sub_pose_topic = "/mavros/vision_pose/pose";
-    this->pub_topic = "/world_point";
+    fsread["camera_matrix"] >> this->camera_intrinsic_matrix;
+
+    fsread["distortion_coefficients"] >> this->distort_coeff_matrix;
+    image_width = fsread["image_width"];
+    image_height = fsread["image_height"];
+
+    fsread["fisheye_model"] >> this->fisheyeFlag;
+
+    fsread["sub_point_topic"] >> this->sub_point_topic;
+    fsread["sub_pose_topic"] >> this->sub_pose_topic;
+    fsread["pub_world_point_topic"] >> this->pub_topic;
 
     if (camera_intrinsic_matrix.empty() || distort_coeff_matrix.empty()) {
-        ROS_INFO("camera init failed ... ");    
+            ROS_INFO("camera init failed ... ");    
     } else {
         ROS_INFO("camera init successed");
     }
@@ -126,6 +135,8 @@ void Camera::readParameters() {
     ROS_INFO("sub_point_topic is %s. ", this->sub_point_topic.c_str());
     ROS_INFO("sub_pose_topic is %s. ", this->sub_pose_topic.c_str());
     ROS_INFO("pub_topic is %s. ", this->pub_topic.c_str());
+
+    fsread.release();
 }
 
 void Camera::init(ros::NodeHandle& nh) {
@@ -163,7 +174,7 @@ void Camera::init(ros::NodeHandle& nh) {
     assert(map1.size().area() > 0 && map2.size().area() > 0);
     ROS_INFO("init successed.");
 
-    poin_sub = nh.subscribe<geometry_msgs::Point>(this->sub_point_topic, 10, boost::bind(&Camera::getPoint, this, _1));
+    poin_sub = nh.subscribe<geometry_msgs::PointStamped>(this->sub_point_topic, 10, boost::bind(&Camera::getPoint, this, _1));
     pose_sub = nh.subscribe<geometry_msgs::PoseStamped>(this->sub_pose_topic, 10, boost::bind(&Camera::getPose, this, _1));
     world_pt_pub = nh.advertise<geometry_msgs::Point>(this->pub_topic, 10);
     ROS_INFO("waiting for message....... ");
@@ -209,7 +220,7 @@ void judgeLanding(const deque<Eigen::Vector3d>& points, ros::Publisher& drop_pub
 
 int main(int argc, char** argv) {
 
-    ros::init(argc, argv, "pt2world_node");
+    ros::init(argc, argv, "undistort_node");
 
     ros::NodeHandle nh;
 
@@ -217,9 +228,15 @@ int main(int argc, char** argv) {
 
     ros::Publisher drop_pub = nh.advertise<std_msgs::Bool>("/drop_flag", 10);
 
-    Camera cam = Camera();
+    if(argc != 2) {
+        printf("please intput: rosrun undistort undistort_node [config file] \n"
+               "for example: rosrun undistort undistort_node "
+               "~/kalibr_ws/config/mono_config.yaml \n");
+        return 1;
+    }
 
-    cam.readParameters();
+    Camera cam = Camera();
+    cam.readParameters(argv[1]);
     cam.init(nh);
 
     ros::Rate hz(100);
@@ -232,7 +249,6 @@ int main(int argc, char** argv) {
             points.push_back(world_pt);
             if (points.size() > 50) points.pop_front();
             judgeLanding(points, drop_pub);
-            cam.run = false;
         }
 
         ros::spinOnce();

@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cstdio>
-#include <unistd.h> // Linux
+// #include <unistd.h> // Linux
+#include <Windows.h>
 
 class TimeRecorder {
 public:
@@ -8,7 +9,8 @@ public:
     double get_time() { return std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - start).count(); }
     void reset() {start = std::chrono::high_resolution_clock::now();}
 private:
-    std::chrono::_V2::system_clock::time_point start;
+    // std::chrono::_V2::system_clock::time_point start;
+    std::chrono::high_resolution_clock::time_point start;
 };
 
 
