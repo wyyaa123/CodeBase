@@ -1,14 +1,16 @@
 clear;clc;
 %% 读取数据
-bag1 = rosbag('xiaolu_fastlio_sloam.bag');
-bag2 = rosbag('xiaolu_aloam.bag');
-bag3 = rosbag('xiaolu_sloam_ori.bag');
+bag1 = rosbag('./deblurred/DeblurGan-V2/pose.bag');
+bag2 = rosbag('./deblurred/FFTformer/pose.bag');
+bag3 = rosbag('./deblurred/GT/pose.bag');
+bag4 = rosbag('./deblurred/NAFNet/pose.bag');
+bag5 = rosbag('./deblurred/Reformer/pose.bag');
 
-fastlio_odom_msgs = select(bag1,'Topic','/Odometry');
-sloam_odom_msgs = select(bag1,'Topic','/sloam/debug/odom');
-rtk_msgs = select(bag1,'Topic','/chattergps');
-aloam_msgs = select(bag2,'Topic','/aft_mapped_to_init');
-sloam_ori_msgs = select(bag3,'Topic','/sloam/debug/odom');
+fastlio_odom_msgs = select(bag1,'Topic','/pose');
+sloam_odom_msgs = select(bag2,'Topic','/pose');
+rtk_msgs = select(bag3,'Topic','/pose');
+aloam_msgs = select(bag4,'Topic','/pose');
+sloam_ori_msgs = select(bag5,'Topic','pose');
 
 fastlio_odom_data = readMessages(fastlio_odom_msgs,'DataFormat','struct');
 sloam_odom_data = readMessages(sloam_odom_msgs,'DataFormat','struct');
@@ -52,7 +54,6 @@ for i = 1:length(rtk_odom_llh)
     rtk_odom_enu(i,3) = rtk_odom_llh(i,3)-rtk_odom_llh(1,3);
 end
 
-% 真值和估计值之间的旋转
 % 绕Z轴旋转角度
 theta_rotation = deg2rad(174.4); 
 
