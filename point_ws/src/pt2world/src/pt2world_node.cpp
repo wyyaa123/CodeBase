@@ -78,8 +78,8 @@ cv::Point2d& Camera::undistorted() {
 
 Eigen::Vector3d Camera::pixel2world(const cv::Point2d& pixelCoor, bool flag) {
     Eigen::Vector3d pt = Eigen::Vector3d{pixelCoor.x, pixelCoor.y, 1};
-    Eigen::Matrix3d intrinsic = (Eigen::Matrix3d() << this->camera_intrinsic_matrix.at<double>(0, 0), 0, this->camera_intrinsic_matrix.at<double>(0, 3), 
-                                                      0, this->camera_intrinsic_matrix.at<double>(1, 1), this->camera_intrinsic_matrix.at<double>(1, 3), 
+    Eigen::Matrix3d intrinsic = (Eigen::Matrix3d() << this->camera_intrinsic_matrix.at<double>(0, 0), 0, this->camera_intrinsic_matrix.at<double>(0, 2), 
+                                                      0, this->camera_intrinsic_matrix.at<double>(1, 1), this->camera_intrinsic_matrix.at<double>(1, 2), 
                                                       0, 0, 1 ).finished();
 
     Eigen::Vector3d cam_pt = intrinsic.inverse() * high_3d * pt;
