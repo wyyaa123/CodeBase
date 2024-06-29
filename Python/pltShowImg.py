@@ -1,8 +1,8 @@
-import torch
-from torch import nn
+# import torch
+# from torch import nn
 import cv2 as cv
 import PIL
-from torch.utils.data import Dataset
+# from torch.utils.data import Dataset
 import albumentations as albu
 import matplotlib.pyplot as plt
 import time
@@ -19,7 +19,7 @@ aug = albu.OneOf([
 
 beg = time.time()
 # raw_img = cv.imread("./assets/3.png", cv.IMREAD_COLOR)[:, :, (2, 1, 0)] # 0.163468599319458 seconds
-raw_img = cv.imread("./assets/3.png", cv.IMREAD_COLOR)[:, :, ::-1] #  0.13281989097595215 seconds
+raw_img = cv.imread("1.png", cv.IMREAD_COLOR)[:, :, ::-1] #  0.13281989097595215 seconds
 during_time = time.time() - beg
 
 img = aug(image = raw_img)['image']

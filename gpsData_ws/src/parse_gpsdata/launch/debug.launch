@@ -1,5 +1,0 @@
-<launch>
-
-<node pkg = "parse_gpsdata" type = "GPStalker" name = "pub"/>
-
-</launch>
