@@ -1,7 +1,7 @@
-I=im2double(imread('./DJI_20240422150647_0143_Zenmuse-L1-mission.JPG'));           %读入清晰原图像
+I=im2double(imread('./DJI_20240422150608_0132_Zenmuse-L1-mission.JPG'));           %读入清晰原图像
 figure(1);imshow(I,[]);         %显示原图像
 title('原图像');
-PSF=fspecial('motion', 60, 30);   %建立二维仿真线性运动滤波器PSF
+PSF=fspecial('motion', 20, 30);   %建立二维仿真线性运动滤波器PSF
 MF=imfilter(I,PSF,'conv', 'circular');  %用PSF产生退化图像
 imwrite(MF, "./blur.png")
 %noise=imnoise(zeros(size(I)),'gaussian',0,0.001);   %产生高斯噪声
